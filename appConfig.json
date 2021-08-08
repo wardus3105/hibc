@@ -1,0 +1,14 @@
+{
+	"configId": {
+		"nodeServer": "001",
+		"objTable": {
+			"user": "00a",
+			"category": "00b",
+			"service": "00c",
+			"article": "00d"
+		}
+	}
+
+}
+
+
