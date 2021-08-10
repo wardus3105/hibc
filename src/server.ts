@@ -3,6 +3,10 @@ import Koa from "koa";
 import Router from "koa-router";
 // Routes
 import articleRouter from "./routes/articles";
+import userRouter from "./routes/users";
+import serviceRouter from "./routes/services";
+import categoryRouter from "./routes/categories";
+
 import logger = require("koa-logger");
 // var KoaStatic = require('koa-static');
 
@@ -120,6 +124,9 @@ app.use(function(ctx, next){
  * */
 
 app.use(articleRouter.routes());
+app.use(userRouter.routes());
+app.use(serviceRouter.routes());
+app.use(categoryRouter.routes());
 
 // app.use(function(ctx, next) {
 //   var today = new Date();

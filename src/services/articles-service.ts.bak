@@ -1,0 +1,80 @@
+import { Article } from "../models/articles";
+import { ArticleDao } from "../dao/article-dao";
+import db from "../common/connection-db";
+import { genGuidId } from "../uuid";
+import { User } from "../models/users";
+import { users } from "../db-export-default-migrated-exported/users";
+import { tags } from "../db-export-default-migrated-exported/tags";
+import { Op, Sequelize } from "sequelize";
+import { Tag } from "../models/tags";
+
+export class ArticleService {
+	articleDao = new ArticleDao();
+
+	async getAll(article?: any): Promise<Article[]> {
+		var whereStatement: any = [];
+
+		if(article.title) {
+			whereStatement.push({ title: {[Op.like]: '%' + article.title + '%'}});
+		}
+
+		if(article.content) {
+			whereStatement.push({ content: {[Op.like]: '%' + article.content + '%'} });
+		}
+
+		var includeStatement: any = [];
+		includeStatement.push({
+			model: users,
+			as: "author"
+		})
+
+		let articles: any = await this.articleDao.findAll({
+			where: {
+				[Op.or]: whereStatement
+			},
+			include: includeStatement 
+		});
+
+		return articles;
+	}
+
+	async getArticleByKeyword(keyword?: any): Promise<Article[]> {
+		var whereStatement: any = [];
+		
+		if(keyword) {
+			whereStatement.push({ title: {[Op.like]: '%' + keyword + '%'}});
+			whereStatement.push({ content: {[Op.like]: '%' + keyword + '%'}});
+			whereStatement.push({ tags: {[Op.like]: '%' + keyword + '%'}});
+		}
+		
+		var includeStatement: any = [];
+		includeStatement.push({
+			model: users,
+			as: "author"
+		})
+
+		let articles: any = await this.articleDao.findAll({
+			where: {
+				[Op.or]: whereStatement
+			},
+			include: includeStatement 
+		});
+
+		return articles;
+
+	}
+
+	async findById(id: String): Promise<Article> {
+		let article: any = await this.articleDao.findOne({
+			where: { id: id },
+			include: { model: users, as: "author" }
+		});
+
+		return article;
+	}
+
+	async create(article?: any): Promise<Article> {
+		let result: any = await this.articleDao.create(article);
+		return result;
+	}
+}

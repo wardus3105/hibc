@@ -1,35 +1,19 @@
 import Router from "koa-router";
 import { RESULT_CODE, RESULT_MESSAGE } from "../core/constants/result-constants";
 import { IDataResult } from "../core/handles/data-result";
-import { Service } from "../models/services";
-import { ServiceService} from "../services/services-service";
+import { User } from "../models/users";
+import { UserService } from "../services/users-service";
 
-const router = new Router({ prefix: "/api/services" });
-const serviceService: ServiceService = new ServiceService();
+const router = new Router({ prefix: "/api/users" });
+const userService: UserService = new UserService();
 
 router.get("/", async(ctx: any, next: any) => {
 	var result: IDataResult = {};
+	var bodyUser: User= ctx.request.body;
 	try {
-		var services: Service[] = await serviceService.getAll();
+		var users: User[] = await userService.getAll(bodyUser);
 		result.status = RESULT_CODE.SUCCESS;
-		result.data = services;
-		result.message = RESULT_MESSAGE.SUCCESS;
-	} catch (error: any) {
-		result.data = error;
-		result.status = RESULT_CODE.ERROR;
-		result.message = RESULT_MESSAGE.ERROR;
-	}
-	ctx.body = result;
-})
-
-router.get("/:id", async(ctx: any, next: any) => {
-	var result: IDataResult = {};
-	var id: any= ctx.query.id;
-	console.log(id);
-	try {
-		var service: Service= await serviceService.findById(id);
-		result.status = RESULT_CODE.SUCCESS;
-		result.data = service;
+		result.data = users;
 		result.message = RESULT_MESSAGE.SUCCESS;
 	} catch (error: any) {
 		result.data = error;
@@ -41,12 +25,31 @@ router.get("/:id", async(ctx: any, next: any) => {
 
 router.post("/", async(ctx: any, next: any) => {
 	var result: IDataResult = {};
-	var body: Service = ctx.request.body;
+	var bodyUser: User= ctx.request.body;
 
 	try {
-		var service: Service= await serviceService.create(body);
+		var user: User= await userService.create(bodyUser);
 		result.status = RESULT_CODE.SUCCESS;
-		result.data = service;
+		result.data = user;
+		result.message = RESULT_MESSAGE.SUCCESS;
+	} catch (error: any) {
+		result.data = error;
+		result.status = RESULT_CODE.ERROR;
+		result.message = RESULT_MESSAGE.ERROR;
+	}
+	
+	ctx.body = result;
+
+})
+
+router.put("/", async(ctx: any, next: any) => {
+	var result: IDataResult = {};
+	var body: User= ctx.request.body;
+
+	try {
+		var user: User = await userService.update(body);
+		result.status = RESULT_CODE.SUCCESS;
+		result.data = user;
 		result.message = RESULT_MESSAGE.SUCCESS;
 	} catch (error: any) {
 		result.data = error;

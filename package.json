@@ -16,6 +16,8 @@
     "@elastic/elasticsearch": "^7.11.0",
     "@koa/cors": "^3.1.0",
     "axios": "^0.21.1",
+    "bcrypt": "^5.0.1",
+    "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "form-data": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
@@ -40,6 +42,7 @@
     "swagger2-koa": "^3.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/consul": "^0.23.34",
     "@types/koa": "^2.11.6",
     "@types/koa-logger": "^3.1.1",

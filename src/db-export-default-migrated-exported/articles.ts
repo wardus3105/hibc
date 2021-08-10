@@ -1,10 +1,12 @@
 import Sequelize, { DataTypes, Model, Optional } from 'sequelize';
+import { genGuidId } from '../uuid';
 
 export interface articlesAttributes {
 	id: string;
 	authorId?: string;
 	title?: string;
 	content?: string;
+	tags?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
@@ -18,15 +20,17 @@ export class articles extends Model<articlesAttributes, articlesCreationAttribut
 	authorId?: string;
 	title?: string;
 	content?: string;
+	tags?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
-
+	
+	static TABLE_NAME = "article";
 
 	static initModel(sequelize: Sequelize.Sequelize): typeof articles {
 		articles.init({
 			id: {
 				type: DataTypes.STRING(24),
-				allowNull: false,
+				allowNull: true,
 				primaryKey: true
 			},
 			authorId: {
@@ -44,26 +48,42 @@ export class articles extends Model<articlesAttributes, articlesCreationAttribut
 				type: DataTypes.TEXT,
 				allowNull: true
 			},
+			tags: {
+				field: "tags",
+				type: DataTypes.TEXT,
+				allowNull: true,
+			},
 			createdAt: {
 				field: "created_at",
 				type: DataTypes.DATE,
 				allowNull: true,
-				/*get(this: any) {
-					return this.getDataValue('created_at').getTime();
-				}*/
+				get(this: any) {
+					var createdAt = this.getDataValue('createdAt');
+					if(createdAt) {
+						return createdAt.getTime();
+					} else {
+						return null;
+					}
+				}
 			},
 			updatedAt: {
 				field: "updated_at",
 				type: DataTypes.DATE,
 				allowNull: true,
-				/*get(this: any) {
-					return this.getDataValue('updated_at').getTime();
-				}*/
+				get(this: any) {
+					var updatedAt = this.getDataValue('updatedAt');
+					if(updatedAt) {
+						return updatedAt.getTime();
+					} else {
+						return null;
+					}
+
+				}
 			}
 		}, {
 			sequelize,
 			tableName: 'articles',
-			timestamps: false,
+			timestamps: true,
 			indexes: [
 				{
 					name: "PRIMARY",
@@ -73,7 +93,12 @@ export class articles extends Model<articlesAttributes, articlesCreationAttribut
 						{ name: "id" },
 					]
 				},
-			]
+			],
+			hooks: {
+				beforeCreate: (article, option) => {
+					article.id = genGuidId(articles.TABLE_NAME);
+				}
+			} 
 		});
 		return articles;
 	}
